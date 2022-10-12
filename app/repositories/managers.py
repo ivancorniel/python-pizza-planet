@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Sequence
 
 from sqlalchemy.sql import text, column
+from sqlalchemy import func, desc
 
 from .models import Ingredient, Order, OrderDetail, Size, Beverage, db
 from .serializers import (IngredientSerializer, OrderSerializer,
@@ -42,6 +43,21 @@ class BaseManager:
 class SizeManager(BaseManager):
     model = Size
     serializer = SizeSerializer
+
+
+class ReportManager(BaseManager):
+
+    @classmethod
+    def get_most_requested_ingredient(cls):
+        return cls.session.query(Ingredient.name, func.count(OrderDetail.ingredient_id)).join(OrderDetail).group_by(Ingredient._id).order_by(desc(func.count(OrderDetail.ingredient_id))).limit(1).all()
+
+    @classmethod
+    def get_top_3_customers(cls):
+        return cls.session.query(Order.client_name, func.count(Order.client_name)).group_by(Order.client_name).order_by(desc(func.count(Order.client_name))).limit(3).all()
+
+    @classmethod
+    def get_month_with_more_revenue(cls):
+        return cls.session.query(Order.date, func.sum(Order.total_price)).group_by(Order.date).order_by(desc(func.sum(Order.total_price))).limit(1).all()
 
 
 class IngredientManager(BaseManager):
