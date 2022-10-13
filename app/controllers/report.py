@@ -1,6 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
-from jinja2 import pass_context
-import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 from app.controllers.base import BaseController
 from app.repositories.managers import ReportManager
