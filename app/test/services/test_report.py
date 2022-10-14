@@ -48,6 +48,6 @@ def test_get_reports(client, report_uri, ingredients, sizes, client_data, bevera
     response = client.get(report_uri)
     pytest.assume(response.status.startswith('200'))
     returned_report = response.json
-    pytest.assume(returned_report[0])
-    pytest.assume(returned_report[1])
-    pytest.assume(returned_report[2])
+    pytest.assume(returned_report['most_requested_ingredient'])
+    pytest.assume(returned_report['top_3_customers'])
+    pytest.assume(returned_report['month_with_more_revenue'])

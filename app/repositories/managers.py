@@ -49,18 +49,24 @@ class ReportManager(BaseManager):
 
     @classmethod
     def get_most_requested_ingredient(cls):
-        ingredients = cls.session.query(Ingredient.name, func.count(OrderDetail.ingredient_id)).join(OrderDetail).group_by(Ingredient._id).order_by(desc(func.count(OrderDetail.ingredient_id))).limit(1).all() or []
-        return [ingredient for ingredient in ingredients]
+        most_requested_ingredient, count = cls.session.query(
+            Ingredient, func.count(OrderDetail.ingredient_id).label('count')).join(OrderDetail).group_by(
+            Ingredient._id).order_by(
+            desc('count')).first()
+        return [most_requested_ingredient.name, count] or []
 
     @classmethod
     def get_top_3_customers(cls):
-        customers = cls.session.query(Order.client_name, func.count(Order.client_name)).group_by(Order.client_name).order_by(desc(func.count(Order.client_name))).limit(3).all() or []
-        return [customer for customer in customers]
+        best_customers = cls.session.query(Order.client_name, func.sum(Order.total_price)).group_by(
+            Order.client_name).order_by(func.sum(Order.total_price).desc()).limit(3).all()
+        return [{'customer': customer, 'amount': round(amount)} for customer, amount in best_customers] or []
 
     @classmethod
     def get_month_with_more_revenue(cls):
-        months = cls.session.query(Order.date, func.sum(Order.total_price)).group_by(Order.date).order_by(desc(func.sum(Order.total_price))).limit(1).all() or []
-        return [month for month in months]
+        month, amount = cls.session.query(func.strftime('%m-%Y', Order.date).label('month'), func.sum(Order.total_price).label('amount')).group_by(
+            'month').order_by(desc('amount')).first()
+        return [month, round(amount)] or []
+
 
 
 class IngredientManager(BaseManager):
