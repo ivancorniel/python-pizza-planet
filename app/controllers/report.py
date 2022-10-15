@@ -20,3 +20,4 @@ class ReportController(BaseController):
                 
         except (SQLAlchemyError, RuntimeError) as ex:
             return None, str(ex)
+
