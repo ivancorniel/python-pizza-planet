@@ -1,3 +1,4 @@
+from time import clock_settime
 from typing import Any, List, Optional, Sequence
 
 from sqlalchemy.sql import text, column
@@ -7,6 +8,7 @@ from .models import Ingredient, Order, OrderDetail, Size, Beverage, db
 from .serializers import (IngredientSerializer, OrderSerializer,
                           SizeSerializer, BeverageSerializer, ma)
 
+from abc import ABC, abstractmethod
 
 class BaseManager:
     model: Optional[db.Model] = None
@@ -43,30 +45,6 @@ class BaseManager:
 class SizeManager(BaseManager):
     model = Size
     serializer = SizeSerializer
-
-
-class ReportManager(BaseManager):
-
-    @classmethod
-    def get_most_requested_ingredient(cls):
-        most_requested_ingredient, count = cls.session.query(
-            Ingredient, func.count(OrderDetail.ingredient_id).label('count')).join(OrderDetail).group_by(
-            Ingredient._id).order_by(
-            desc('count')).first()
-        return [most_requested_ingredient.name, count] or []
-
-    @classmethod
-    def get_top_3_customers(cls):
-        best_customers = cls.session.query(Order.client_name, func.sum(Order.total_price)).group_by(
-            Order.client_name).order_by(func.sum(Order.total_price).desc()).limit(3).all()
-        return [{'customer': customer, 'amount': round(amount)} for customer, amount in best_customers] or []
-
-    @classmethod
-    def get_month_with_more_revenue(cls):
-        month, amount = cls.session.query(func.strftime('%m-%Y', Order.date).label('month'), func.sum(Order.total_price).label('amount')).group_by(
-            'month').order_by(desc('amount')).first()
-        return [month, round(amount)] or []
-
 
 
 class IngredientManager(BaseManager):
@@ -113,3 +91,45 @@ class IndexManager(BaseManager):
     @classmethod
     def test_connection(cls):
         cls.session.query(column('1')).from_statement(text('SELECT 1')).all()
+
+
+class ReportCreator(ABC):
+    session = db.session
+
+    @abstractmethod
+    def create_report(self):
+        pass
+
+    @classmethod
+    def return_report(cls):
+        report = cls.create_report()
+        return report
+
+
+class MostRequestedIngredient(ReportCreator):
+
+    @classmethod
+    def create_report(cls):
+        most_requested_ingredient, count = cls.session.query(
+            Ingredient, func.count(OrderDetail.ingredient_id).label('count')).join(OrderDetail).group_by(
+            Ingredient._id).order_by(
+            desc('count')).first()
+        return [most_requested_ingredient.name, count] or []
+
+
+class Top3Customers(ReportCreator):
+
+    @classmethod
+    def create_report(cls):
+        best_customers = cls.session.query(Order.client_name, func.sum(Order.total_price)).group_by(
+            Order.client_name).order_by(func.sum(Order.total_price).desc()).limit(3).all()
+        return [{'customer': customer, 'amount': round(amount)} for customer, amount in best_customers] or []
+
+
+class MonthWithMoreRevenue(ReportCreator):
+
+    @classmethod
+    def create_report(cls):
+        month, amount = cls.session.query(func.strftime('%m-%Y', Order.date).label('month'), func.sum(Order.total_price).label('amount')).group_by(
+            'month').order_by(desc('amount')).first()
+        return [month, round(amount)] or []
