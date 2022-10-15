@@ -7,13 +7,20 @@ from flask_migrate import Migrate
 from app import flask_app
 from app.plugins import db
 # flake8: noqa
-from app.repositories.models import Ingredient, Order, OrderDetail, Size
+from app.repositories.models import Ingredient, Order, OrderDetail, Size, Beverage
+from app.dummy_data import dummy_data_creator
 
 
 manager = FlaskGroup(flask_app)
 
+
 migrate = Migrate()
 migrate.init_app(flask_app, db)
+
+
+@manager.command('orders', with_appcontext=True)
+def dummy_orders():
+    return  dummy_data_creator.main()
 
 
 @manager.command('test', with_appcontext=False)
