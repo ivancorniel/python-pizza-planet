@@ -1,4 +1,3 @@
-from time import clock_settime
 from typing import Any, List, Optional, Sequence
 
 from sqlalchemy.sql import text, column
@@ -133,3 +132,4 @@ class MonthWithMoreRevenue(ReportCreator):
         month, amount = cls.session.query(func.strftime('%m-%Y', Order.date).label('month'), func.sum(Order.total_price).label('amount')).group_by(
             'month').order_by(desc('amount')).first()
         return [month, round(amount)] or []
+

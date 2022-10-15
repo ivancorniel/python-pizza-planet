@@ -6,7 +6,7 @@ from app.repositories.managers import ReportCreator, MostRequestedIngredient, To
 class ReportController(BaseController):
     
     @classmethod
-    def get_report_data(report_creator: ReportCreator):
+    def get_report_data(report_creator):
         try:
             most_requested_ingredient = MostRequestedIngredient.return_report()
             top_3_customers = Top3Customers.return_report()
