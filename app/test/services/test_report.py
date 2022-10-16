@@ -1,6 +1,5 @@
 import pytest
 
-from app.controllers.report import ReportController
 from app .controllers.beverage import BeverageController
 from app.controllers.ingredient import IngredientController
 from app.controllers.order import OrderController
