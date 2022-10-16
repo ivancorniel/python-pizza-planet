@@ -20,6 +20,10 @@ migrate.init_app(flask_app, db)
 
 @manager.command('orders', with_appcontext=True)
 def dummy_orders():
+    '''
+    Populates the database with dummy orders.
+    See dummy_data_creator for implemention details.
+    '''
     return  dummy_data_creator.main()
 
 

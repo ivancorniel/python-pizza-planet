@@ -1,6 +1,6 @@
 from random import randint
 
-from app.test.utils.functions import *
+from app.test.utils.functions import get_random_string, get_random_sequence, shuffle_list
 
 from app.controllers.size import SizeController
 from app.controllers.ingredient import IngredientController
@@ -9,7 +9,23 @@ from app.controllers.order import OrderController
 
 def main():
 
-    client_names = ['Ivan', 'Marco', 'Ricardo', 'Dylan', 'David', 'Wladimyr','Fausto', 'Gustavo', 'Astrid', 'Marievelyn', 'Mary', 'Brandy', 'Lucas', 'Roland', 'Israel']
+    client_names = [
+        'Ivan', 
+        'Marco', 
+        'Ricardo', 
+        'Dylan', 
+        'David', 
+        'Wladimyr',
+        'Fausto', 
+        'Gustavo', 
+        'Astrid', 
+        'Marievelyn', 
+        'Mary', 
+        'Brandy', 
+        'Lucas', 
+        'Roland', 
+        'Israel'
+    ]
 
     def client_dummy_data() -> dict:
         return {

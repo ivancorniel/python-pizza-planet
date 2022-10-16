@@ -93,6 +93,10 @@ class IndexManager(BaseManager):
 
 
 class ReportCreator(ABC):
+    '''
+    Abstract class that serves as context for the report factory.
+    This exposes the methods to create report and return the report created.
+    '''
     session = db.session
 
     @abstractmethod

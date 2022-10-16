@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from app.controllers.beverage import BeverageController
 from .base_service import base_service
 
+
 beverage = Blueprint('beverage', __name__)
 
 

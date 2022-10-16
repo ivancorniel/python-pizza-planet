@@ -1,6 +1,6 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.controllers.base import BaseController
-from app.repositories.managers import ReportCreator, MostRequestedIngredient, Top3Customers, MonthWithMoreRevenue
+from app.repositories.managers import MostRequestedIngredient, Top3Customers, MonthWithMoreRevenue
 
 
 class ReportController(BaseController):
